@@ -95,3 +95,27 @@
 - Liskov: subtypes must be substitutable without breaking behavior
 - Interface Segregation: many small interfaces > one large interface
 - Dependency Inversion: depend on abstractions, not concretions
+
+## Day 5: DDD Basics – Entities, Value Objects, Aggregates, Repositories  
+ادغام DDD در لایه Core
+
+**Completed Today:**
+- Studied core DDD concepts:
+  - **Entity**: objects with identity (e.g., Product with Guid Id)
+  - **Value Object**: immutable objects defined by values (e.g., Money with Amount + Currency)
+  - **Aggregate**: consistency boundary – group of Entities + Value Objects accessed via Aggregate Root
+  - **Repository**: abstraction for retrieving/storing Aggregates (only Root, not internal Entities)
+- Refactored Product in Core:
+  - Converted Price to Money Value Object
+  - Added domain behavior (ReduceStock, IncreaseStock)
+  - Enforced invariants (validation in constructor)
+- Defined IProductRepository in Application layer (abstraction)
+- Provided in-memory implementation in Infrastructure
+- Ensured Core remains pure: no EF Core, no external references
+
+**Key Learnings:**
+- Entities have identity and lifecycle
+- Value Objects are immutable and compared by value
+- Aggregates protect invariants – only accessed via Root
+- Repositories return Aggregates, not individual Entities
+- Core layer is now DDD-rich: business rules encapsulated

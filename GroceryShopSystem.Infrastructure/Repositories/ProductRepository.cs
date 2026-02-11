@@ -15,7 +15,7 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetAllAsync()
     {
-        return Task.FromResult<IEnumerable<Product>>(_products);
+        return Task.FromResult<IEnumerable<Product>>(_products.AsReadOnly());
     }
 
     public Task AddAsync(Product product)

@@ -8,7 +8,7 @@ public class ProductValidator: IValidator<Product>
         if (string.IsNullOrWhiteSpace(product.Name))
             throw new ArgumentException("Name is required");
 
-        if (product.Price <= 0)
+        if (product.Price.Amount <= 0)
             throw new ArgumentException("Price must be positive");
     }
 }
