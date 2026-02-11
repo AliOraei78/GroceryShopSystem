@@ -39,7 +39,7 @@
 - Application layer owns use-case interfaces → Infrastructure provides implementations
 - Core remains pure and framework-agnostic (no EF Core, no ASP.NET references)
 
-## Day 3 - Phase 7: Vertical Slice Architecture – Feature-based slicing vs horizontal layers  
+## Day 3: Vertical Slice Architecture – Feature-based slicing vs horizontal layers  
 ترکیب Vertical Slice با Clean/Onion
 
 **Completed Today:**
@@ -71,3 +71,27 @@
   - Application owns slice interfaces and handlers
   - Dependency Rule preserved: outer layers depend on inner abstractions
 - First vertical slice created: Product Management (Commands/Queries/DTOs)
+
+## Day 4: SOLID Principles in Clean Architecture
+
+**Completed Today:**
+- Deep dive into SOLID principles with Clean Architecture focus
+- Applied each principle to GroceryShopSystem:
+  - S: Single Responsibility → separated validation logic from entity
+  - O: Open-Closed → introduced IValidator<T> for extensible validation
+  - L: Liskov Substitution → ensured repository implementations are interchangeable
+  - I: Interface Segregation → kept IProductRepository small and focused
+  - D: Dependency Inversion → high-level depends on abstractions only
+- Refactored code to better align with SOLID:
+  - Added ProductValidator in Application
+  - Introduced IValidator<T> interface
+  - Verified no direct dependencies in Core/Application to Infrastructure
+- Tested endpoint `/api/products` after refactoring
+
+**Key Learnings:**
+- SOLID ensures maintainable, testable, and flexible code in Clean Arch
+- Single Responsibility: one class = one reason to change
+- Open-Closed: extend behavior without modifying existing code
+- Liskov: subtypes must be substitutable without breaking behavior
+- Interface Segregation: many small interfaces > one large interface
+- Dependency Inversion: depend on abstractions, not concretions

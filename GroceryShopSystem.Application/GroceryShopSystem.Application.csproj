@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Products\DTOs\" />
-    <Folder Include="Features\Products\Validators\" />
   </ItemGroup>
 
 </Project>
