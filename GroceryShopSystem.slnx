@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="GroceryShopSystem.Api/GroceryShopSystem.Api.csproj" />
+  <Project Path="GroceryShopSystem.Application/GroceryShopSystem.Application.csproj" />
+  <Project Path="GroceryShopSystem.Core/GroceryShopSystem.Core.csproj" />
+  <Project Path="GroceryShopSystem.Infrastructure/GroceryShopSystem.Infrastructure.csproj" />
+</Solution>
