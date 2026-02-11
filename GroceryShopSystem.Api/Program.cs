@@ -1,3 +1,6 @@
+using FluentValidation;
+using GroceryShopSystem.Application.Features.Products.Queries;
+using GroceryShopSystem.Application.Features.Products.Validators;
 using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Infrastructure.Repositories;
 using Scalar.AspNetCore;
@@ -11,6 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllProductsQuery).Assembly));
+
+builder.Services.AddValidatorsFromAssemblyContaining<AddProductCommandValidator>();
 
 var app = builder.Build();
 

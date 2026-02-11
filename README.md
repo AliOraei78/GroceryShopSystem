@@ -40,7 +40,7 @@
 - Core remains pure and framework-agnostic (no EF Core, no ASP.NET references)
 
 ## Day 3: Vertical Slice Architecture – Feature-based slicing vs horizontal layers  
-ترکیب Vertical Slice با Clean/Onion
+Integrating Vertical Slice with Clean/Onion Architecture
 
 **Completed Today:**
 - Deep comparison between horizontal layering and vertical slice architecture
@@ -97,7 +97,7 @@
 - Dependency Inversion: depend on abstractions, not concretions
 
 ## Day 5: DDD Basics – Entities, Value Objects, Aggregates, Repositories  
-ادغام DDD در لایه Core
+Integration of DDD into the Core Layer
 
 **Completed Today:**
 - Studied core DDD concepts:
@@ -121,7 +121,7 @@
 - Core layer is now DDD-rich: business rules encapsulated
 
 ## Day 6: CQRS in Vertical Slice – Commands, Queries, Handlers  
-پیاده‌سازی CQRS در slices
+Implementing CQRS within Vertical Slices
 
 **Completed Today:**
 - Introduced CQRS (Command Query Responsibility Segregation) as core pattern in Vertical Slice
@@ -139,3 +139,30 @@
 - Queries: read data, return DTOs or projections
 - Vertical Slice + CQRS = cohesive feature folders with all related code (command + query + handler + DTO)
 - Dependency flow preserved: Application owns CQRS contracts, Core remains pure
+
+## Day 7 - Phase 7: MediatR & FluentValidation Integration  
+Implementing Command and Query Handlers using MediatR with validation via FluentValidation
+
+**Completed Today:**
+- Installed and configured **MediatR** as the central mediator for processing Commands and Queries
+- Added **FluentValidation** for input validation within the MediatR pipeline
+- Implemented full CQRS handlers in Vertical Slice:
+  - `AddProductCommand` + `AddProductCommandHandler` (creates Product entity and persists via repository)
+  - `GetAllProductsQuery` + `GetAllProductsQueryHandler` (retrieves and maps to DTO)
+- Created validator: `AddProductCommandValidator` with rules for Name, Price, Category, and Stock
+- Refactored `ProductsController` to use MediatR instead of direct repository calls:
+  - `GET /api/products` → sends `GetAllProductsQuery`
+  - `POST /api/products` → sends `AddProductCommand`
+- Registered MediatR and FluentValidation in DI (Program.cs)
+- Tested endpoints in Swagger/Postman:
+  - Successful POST with valid data → returns new Guid
+  - Invalid POST → returns validation errors (400 Bad Request)
+  - GET → returns list of ProductDto
+
+**Key Learnings:**
+- MediatR decouples controllers from business logic (send message → handler processes)
+- Commands return result (Guid for AddProduct), Queries return data (IEnumerable<ProductDto>)
+- FluentValidation integrates seamlessly with MediatR via pipeline behaviors
+- Validation rules centralized in Application layer (not in controller or entity)
+- Vertical Slice remains cohesive: command + handler + validator + DTO all in one feature folder
+- Clean Architecture preserved: Application owns handlers and validators, Infrastructure provides repository implementations

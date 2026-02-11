@@ -1,6 +1,6 @@
-using GroceryShopSystem.Application.Features.Products.DTOs;
-using GroceryShopSystem.Application.Interfaces.Repositories;
-using GroceryShopSystem.Infrastructure.Repositories;
+using MediatR;
+using GroceryShopSystem.Application.Features.Products.Commands;
+using GroceryShopSystem.Application.Features.Products.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroceryShopSystem.Api.Controllers;
@@ -9,25 +9,24 @@ namespace GroceryShopSystem.Api.Controllers;
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IMediator _mediator;
 
-    public ProductsController(IProductRepository repository)
+    public ProductsController(IMediator mediator)
     {
-        _productRepository = repository;
+        _mediator = mediator;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var products = await _productRepository.GetAllAsync();
-        var dtos = products.Select(p => new ProductDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Price = p.Price.Amount,
-            Category = p.Category,
-            Stock = p.Stock
-        });
-        return Ok(dtos);
+        var products = await _mediator.Send(new GetAllProductsQuery());
+        return Ok(products);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Add([FromBody] AddProductCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetAll), new { id }, null);
     }
 }
