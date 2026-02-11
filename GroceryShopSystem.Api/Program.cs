@@ -28,3 +28,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+app.MapGet("/api/products", async (IProductRepository repo) =>
+{
+    var products = await repo.GetAllAsync();
+    return Results.Ok(products);
+});

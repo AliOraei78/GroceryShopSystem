@@ -38,3 +38,36 @@
 - Dependency Rule strictly enforced: inner layers know nothing about outer layers
 - Application layer owns use-case interfaces → Infrastructure provides implementations
 - Core remains pure and framework-agnostic (no EF Core, no ASP.NET references)
+
+## Day 3 - Phase 7: Vertical Slice Architecture – Feature-based slicing vs horizontal layers  
+ترکیب Vertical Slice با Clean/Onion
+
+**Completed Today:**
+- Deep comparison between horizontal layering and vertical slice architecture
+- Identified key limitations of traditional layered approach in large-scale projects (tight coupling, scattered feature code, hard refactoring)
+- Introduced Vertical Slice as a feature-centric organization method
+- Refactored project structure toward vertical slices:
+  - Moved from horizontal folders (Commands/Queries/Services global) to feature-based folders
+  - Created first vertical slice: **Products** (Commands, Queries, DTOs, Validators all in one folder)
+- Combined Vertical Slice with Clean/Onion principles:
+  - Core layer remains pure and central (Entities, domain logic)
+  - Application layer owns feature slices (use cases per feature)
+  - Infrastructure provides concrete implementations (repositories, persistence)
+  - Presentation (API) consumes slices via endpoints
+- Added basic command/query placeholders for Product feature
+- Updated dependency flow to support slice-based design
+- Tested basic endpoint `/api/products` (GET all) after refactoring
+
+**Key Learnings:**
+- Horizontal layers organize code by technical role → leads to scattered feature logic
+- Vertical Slice organizes code by business feature → all code for one use case stays together
+- Benefits of Vertical Slice:
+  - Easier feature addition/removal/refactoring
+  - Better team parallelism (teams own slices)
+  - Reduced cognitive load (no jumping between layers)
+  - Improved testability (slice contains everything needed)
+- Integration with Clean/Onion:
+  - Core still independent (no framework references)
+  - Application owns slice interfaces and handlers
+  - Dependency Rule preserved: outer layers depend on inner abstractions
+- First vertical slice created: Product Management (Commands/Queries/DTOs)
