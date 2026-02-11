@@ -10,8 +10,4 @@
     <ProjectReference Include="..\GroceryShopSystem.Core\GroceryShopSystem.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Products\DTOs\" />
-  </ItemGroup>
-
 </Project>

@@ -119,3 +119,23 @@
 - Aggregates protect invariants – only accessed via Root
 - Repositories return Aggregates, not individual Entities
 - Core layer is now DDD-rich: business rules encapsulated
+
+## Day 6: CQRS in Vertical Slice – Commands, Queries, Handlers  
+پیاده‌سازی CQRS در slices
+
+**Completed Today:**
+- Introduced CQRS (Command Query Responsibility Segregation) as core pattern in Vertical Slice
+- Differentiated Command (write, side-effect) vs Query (read-only)
+- Created first Command: `AddProductCommand` (in Products/Commands)
+- Created first Query: `GetAllProductsQuery` (in Products/Queries)
+- Added DTO: `ProductDto` for query results
+- Updated `IProductRepository` to support query methods
+- Refactored ProductsController to use repository (placeholder – MediatR next)
+- Prepared structure for handlers (Commands/Queries + Handlers per feature)
+
+**Key Learnings:**
+- CQRS separates read and write models → allows independent scaling/optimization
+- Commands: change state, usually return void or Result
+- Queries: read data, return DTOs or projections
+- Vertical Slice + CQRS = cohesive feature folders with all related code (command + query + handler + DTO)
+- Dependency flow preserved: Application owns CQRS contracts, Core remains pure

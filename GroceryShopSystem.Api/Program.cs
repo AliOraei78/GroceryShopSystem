@@ -1,4 +1,4 @@
-using GroceryShopSystem.Application.Interfaces;
+using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 

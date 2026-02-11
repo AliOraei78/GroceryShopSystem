@@ -1,6 +1,6 @@
 ﻿using GroceryShopSystem.Core.Entities;
 
-namespace GroceryShopSystem.Application.Interfaces;
+namespace GroceryShopSystem.Application.Interfaces.Repositories;
 
 public interface IProductRepository
 {
