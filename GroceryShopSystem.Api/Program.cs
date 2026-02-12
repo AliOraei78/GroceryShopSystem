@@ -3,7 +3,10 @@ using GroceryShopSystem.Application.Features.Products.Queries;
 using GroceryShopSystem.Application.Features.Products.Validators;
 using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Infrastructure.Repositories;
+using Hangfire;
+using Hangfire.Redis.StackExchange;
 using Scalar.AspNetCore;
+using Hangfire.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,22 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAl
 
 builder.Services.AddValidatorsFromAssemblyContaining<AddProductCommandValidator>();
 
+// Redis Caching
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+    options.InstanceName = "GroceryShopSystem:";
+});
+
+// Hangfire
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,16 +47,18 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseHangfireDashboard("/hangfire");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
-
 app.MapGet("/api/products", async (IProductRepository repo) =>
 {
     var products = await repo.GetAllAsync();
     return Results.Ok(products);
 });
+
+app.Run();

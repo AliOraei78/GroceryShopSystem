@@ -3,6 +3,7 @@ using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Core.Entities;
 using GroceryShopSystem.Core.ValueObjects;
 using MediatR;
+using Hangfire; // <--- Add this line
 
 namespace GroceryShopSystem.Application.Features.Products.Commands;
 
@@ -19,12 +20,14 @@ public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Guid>
     {
         var product = new Product(
             request.Name,
-            new Money(request.Price, "IRR"), // فرض ارز IRR
+            new Money(request.Price, "IRR"),
             request.Category,
             request.InitialStock
         );
 
-        await _repository.AddAsync(product);
+        await _repository.AddAsync(product).ConfigureAwait(false);
+
+        BackgroundJob.Enqueue<SendProductAddedEmailJob>(job => job.Execute(product.Id));
 
         return product.Id;
     }
