@@ -167,7 +167,7 @@ Implementing Command and Query Handlers using MediatR with validation via Fluent
 - Vertical Slice remains cohesive: command + handler + validator + DTO all in one feature folder
 - Clean Architecture preserved: Application owns handlers and validators, Infrastructure provides repository implementations
 
-## Day 8 - Phase 7: Testing in Clean Architecture  
+## Day 8: Testing in Clean Architecture  
 Unit, Integration, and End-to-End (E2E) Testing of Layers using xUnit and Moq
 
 **Completed Today:**
