@@ -140,7 +140,7 @@ Implementing CQRS within Vertical Slices
 - Vertical Slice + CQRS = cohesive feature folders with all related code (command + query + handler + DTO)
 - Dependency flow preserved: Application owns CQRS contracts, Core remains pure
 
-## Day 7 - Phase 7: MediatR & FluentValidation Integration  
+## Day 7: MediatR & FluentValidation Integration  
 Implementing Command and Query Handlers using MediatR with validation via FluentValidation
 
 **Completed Today:**
@@ -195,3 +195,29 @@ Unit, Integration, and End-to-End (E2E) Testing of Layers using xUnit and Moq
 - Application handlers tested independently → ensures use-case logic is correct
 - Testing pyramid applied: many unit tests, fewer integration, minimal E2E
 - Tests remain fast and reliable (no real DB in unit tests)
+
+## Day 9: Refactoring & Anti-Patterns  
+Avoiding Anemic Domain, God Classes, Fat Controllers & More
+
+**Completed Today:**
+- Identified and refactored Anemic Domain Model in Product entity
+  - Enriched domain with behavior (ReduceStock, IncreaseStock, UpdatePrice)
+  - Moved validation to constructor and domain methods
+  - Introduced Guard class for readable invariants
+- Eliminated God Class risk in handlers
+  - Separated concerns: validation (FluentValidation), domain creation, persistence
+- Prevented Fat Controller pattern
+  - Controller only mediates (sends commands/queries via MediatR)
+  - No business logic or validation in controller
+- Applied refactoring best practices:
+  - Tell, Don't Ask → domain methods instead of get/set + external logic
+  - Encapsulated business rules in entity (not in service/handler)
+  - Improved expressiveness of domain language
+- Verified refactoring with unit tests (Core & Application layers)
+
+**Key Learnings:**
+- Anemic Domain Model: data-only classes → move behavior to entities
+- God Class: one class doing everything → split responsibilities
+- Fat Controller: logic in controller → delegate to MediatR handlers
+- Tell, Don't Ask: entities should protect invariants internally
+- Refactoring goal: domain should speak its own language (ubiquitous language)

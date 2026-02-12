@@ -1,56 +1,61 @@
-﻿using GroceryShopSystem.Core.ValueObjects;
+﻿// Core/Entities/Product.cs
+using GroceryShopSystem.Core.ValueObjects;
+using System;
+using Ardalis.GuardClauses;
 
 namespace GroceryShopSystem.Core.Entities;
 
 public class Product
 {
-    public Guid Id { get; private set; }  // Entity identity
+    public Guid Id { get; private set; }
     public string Name { get; private set; }
-    public Money Price { get; private set; }  // Value Object
+    public Money Price { get; private set; }
     public string Category { get; private set; }
     public int Stock { get; private set; }
 
-    // Aggregate Root – Stock is only accessible through this class
-    private Product() { } // For EF Core
+    private Product() { } // EF Core
 
     public Product(string name, Money price, string category, int initialStock)
     {
         Id = Guid.NewGuid();
-        Name = !string.IsNullOrWhiteSpace(name)
-            ? name
-            : throw new ArgumentException("Name is required");
+        Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
 
-        Price = price ?? throw new ArgumentNullException(nameof(price));
+        // Fix: Guard clauses throw automatically. No need for ternary logic.
+        Guard.Against.NegativeOrZero(price.Amount, nameof(price));
+        Price = price;
 
-        Category = !string.IsNullOrWhiteSpace(category)
-            ? category
-            : throw new ArgumentException("Category is required");
+        Category = Guard.Against.NullOrWhiteSpace(category, nameof(category));
+        Stock = Guard.Against.Negative(initialStock, nameof(initialStock));
 
-        Stock = initialStock >= 0
-            ? initialStock
-            : throw new ArgumentException("Stock cannot be negative");
+        // Domain event (Future use)
+        // DomainEvents.Raise(new ProductCreatedEvent(Id));
     }
 
-    // Domain behavior
     public void ReduceStock(int quantity)
     {
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive");
+        Guard.Against.NegativeOrZero(quantity, nameof(quantity));
 
         if (quantity > Stock)
-            throw new InvalidOperationException(
-                $"Insufficient stock. Available: {Stock}");
+            throw new InsufficientStockException($"Insufficient stock. Available: {Stock}, Requested: {quantity}");
 
         Stock -= quantity;
-
-        // You can publish a Domain Event here (in the future)
     }
 
     public void IncreaseStock(int quantity)
     {
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive");
-
+        Guard.Against.NegativeOrZero(quantity, nameof(quantity));
         Stock += quantity;
     }
+
+    public void UpdatePrice(Money newPrice)
+    {
+        Guard.Against.NegativeOrZero(newPrice.Amount, nameof(newPrice));
+        Price = newPrice;
+    }
+}
+
+// Add this class to your project (usually in Core/Exceptions)
+public class InsufficientStockException : Exception
+{
+    public InsufficientStockException(string message) : base(message) { }
 }
