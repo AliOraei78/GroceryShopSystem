@@ -166,3 +166,32 @@ Implementing Command and Query Handlers using MediatR with validation via Fluent
 - Validation rules centralized in Application layer (not in controller or entity)
 - Vertical Slice remains cohesive: command + handler + validator + DTO all in one feature folder
 - Clean Architecture preserved: Application owns handlers and validators, Infrastructure provides repository implementations
+
+## Day 8 - Phase 7: Testing in Clean Architecture  
+Unit، Integration و E2E Testing لایه‌ها با xUnit و Moq
+
+**Completed Today:**
+- Established a dedicated test project: **GroceryShopSystem.Tests** (xUnit)
+- Installed essential testing packages:
+  - xunit, xunit.runner.visualstudio, Moq, Microsoft.NET.Test.Sdk
+  - Prepared for future integration: Testcontainers, WebApplicationFactory
+- Wrote **Unit Tests** for Core layer:
+  - Product entity creation, validation invariants, domain behavior (ReduceStock/IncreaseStock)
+  - Verified exceptions for invalid data (negative price, insufficient stock)
+- Wrote **Unit Tests** for Application layer:
+  - AddProductCommandHandler with Moq repository
+  - Tested successful addition, correct entity creation, repository interaction verification
+- Introduced testing strategy per layer:
+  - Core & Application: pure unit tests (no DB, full mocking)
+  - Infrastructure: integration tests (real DB or InMemory)
+  - Api: end-to-end tests (WebApplicationFactory + real HTTP calls)
+- Ran all tests successfully (`dotnet test`) → green results
+- Updated README with testing structure, tools, and coverage goals
+
+**Key Learnings:**
+- Unit tests in Clean Arch focus on Core & Application (mock external dependencies)
+- Moq used for repository isolation → verifies interactions without real DB
+- Domain invariants enforced and tested at entity level (no external validation needed)
+- Application handlers tested independently → ensures use-case logic is correct
+- Testing pyramid applied: many unit tests, fewer integration, minimal E2E
+- Tests remain fast and reliable (no real DB in unit tests)

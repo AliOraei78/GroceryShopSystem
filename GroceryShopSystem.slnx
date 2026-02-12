@@ -6,4 +6,5 @@
   <Project Path="GroceryShopSystem.Application/GroceryShopSystem.Application.csproj" />
   <Project Path="GroceryShopSystem.Core/GroceryShopSystem.Core.csproj" />
   <Project Path="GroceryShopSystem.Infrastructure/GroceryShopSystem.Infrastructure.csproj" />
+  <Project Path="GroceryShopSystem.Tests/GroceryShopSystem.Tests.csproj" Id="e66fe3d0-bf37-4d01-bebb-1beb502353a0" />
 </Solution>
