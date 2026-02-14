@@ -3,10 +3,13 @@ using GroceryShopSystem.Application.Features.Products.Queries;
 using GroceryShopSystem.Application.Features.Products.Validators;
 using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Hangfire;
+using Hangfire.AspNetCore;
 using Hangfire.Redis.StackExchange;
 using Scalar.AspNetCore;
-using Hangfire.AspNetCore;
+using GroceryShopSystem.Infrastructure.Persistence;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +40,9 @@ builder.Services.AddHangfire(config => config
     .UseRedisStorage(builder.Configuration.GetConnectionString("Redis")));
 
 builder.Services.AddHangfireServer();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention());
 
 var app = builder.Build();
 

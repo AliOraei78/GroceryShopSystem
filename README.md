@@ -221,3 +221,75 @@ Avoiding Anemic Domain, God Classes, Fat Controllers & More
 - Fat Controller: logic in controller → delegate to MediatR handlers
 - Tell, Don't Ask: entities should protect invariants internally
 - Refactoring goal: domain should speak its own language (ubiquitous language)
+
+## Day 10: Performance & Scalability  
+Caching, Async, Background Jobs – Optimization with Redis and Hangfire
+
+**Completed Today:**
+- Implemented full performance and scalability improvements across GroceryShopSystem
+- Added **Redis caching** for frequently accessed queries (e.g., GetAllProducts)
+  - Used `IDistributedCache` with StackExchange.Redis
+  - Cached query results with absolute + sliding expiration (5 min / 2 min)
+  - Reduced database load for read-heavy operations
+- Ensured **full async/await** usage throughout the stack
+  - Applied `ConfigureAwait(false)` in non-UI contexts to prevent deadlocks
+  - All repository calls, handler logic, and external calls made fully asynchronous
+- Integrated **Hangfire** for background job processing
+  - Added Hangfire with Redis storage
+  - Created sample background job: `SendProductAddedEmailJob`
+  - Enqueued job after successful product creation (fire-and-forget)
+  - Enabled Hangfire dashboard at `/hangfire` for job monitoring
+- Tested real-world impact:
+  - Measured response time improvement with caching enabled
+  - Verified background job execution in Hangfire dashboard
+  - Confirmed async pipeline handles high concurrency without blocking
+- Updated configuration:
+  - Added Redis connection string in appsettings.json
+  - Registered services in Program.cs (Redis cache + Hangfire server/dashboard)
+
+**Key Learnings:**
+- **Caching**: Dramatically reduces latency and DB pressure for read operations
+  - Cache key design, expiration policies, and invalidation are critical
+- **Async/await**: Prevents thread pool starvation and improves throughput
+  - Always use `ConfigureAwait(false)` in library code
+- **Hangfire**: Ideal for fire-and-forget or scheduled tasks (emails, reports, order processing)
+  - Redis storage provides durability and scalability
+  - Dashboard offers excellent visibility into job queue and history
+- Performance gains are measurable: faster API responses, non-blocking I/O, offloaded heavy work
+
+## Day 11: Complete GroceryShopSystemAPI Implementation with Vertical Slice
+
+**Completed Today:**
+- Finalized full implementation of **GroceryShopSystemAPI** using **Clean Architecture + Onion + Vertical Slice**
+- Completed the **Products** vertical slice with all required components:
+  - Commands: `AddProductCommand` + `AddProductCommandHandler` + `AddProductCommandValidator`
+  - Queries: `GetAllProductsQuery` + `GetAllProductsQueryHandler`
+  - DTOs: `ProductDto` for clean output projection
+  - Validators: FluentValidation rules for input validation
+- Implemented Infrastructure layer with real persistence:
+  - `AppDbContext` (EF Core DbContext)
+  - `ProductConfiguration` (EntityTypeConfiguration for owned types and constraints)
+  - `ProductRepository` (real EF Core implementation of `IProductRepository`)
+- Registered all dependencies in `Program.cs`:
+  - DbContext with Npgsql provider
+  - MediatR handlers from Application assembly
+  - FluentValidation validators
+  - Repository implementations
+- Created and applied initial migration:
+  - `dotnet ef migrations add InitialCreate`
+  - `dotnet ef database update`
+- Verified end-to-end functionality:
+  - POST /api/products → creates new product in real database
+  - GET /api/products → returns list of ProductDto from database
+  - Data persists across restarts (PostgreSQL volume)
+  - Validation errors return 400 Bad Request with detailed messages
+- Updated README with complete architecture overview, structure, and setup instructions
+
+**Key Learnings:**
+- Vertical Slice + Clean/Onion delivers cohesive, feature-focused code while maintaining separation of concerns
+- Core remains pure: only entities, value objects, and domain rules
+- Application owns use-cases: commands, queries, handlers, validators, DTOs
+- Infrastructure owns technical details: DbContext, EF configurations, concrete repositories
+- MediatR decouples presentation from application logic
+- FluentValidation ensures input validation at application boundary
+- EF Core migrations enable real persistence from day one

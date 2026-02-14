@@ -1,26 +1,32 @@
 ﻿using GroceryShopSystem.Application.Interfaces.Repositories;
 using GroceryShopSystem.Core.Entities;
+using GroceryShopSystem.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace GroceryShopSystem.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    private static readonly List<Product> _products = new();
+    private readonly AppDbContext _context;
 
-    public Task<Product> GetByIdAsync(Guid id)
+    public ProductRepository(AppDbContext context)
     {
-        var product = _products.FirstOrDefault(p => p.Id == id);
-        return Task.FromResult(product);
+        _context = context;
     }
 
-    public Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<Product> GetByIdAsync(Guid id)
     {
-        return Task.FromResult<IEnumerable<Product>>(_products.AsReadOnly());
+        return await _context.Products.FindAsync(id);
     }
 
-    public Task AddAsync(Product product)
+    public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        _products.Add(product);
-        return Task.CompletedTask;
+        return await _context.Products.ToListAsync();
+    }
+
+    public async Task AddAsync(Product product)
+    {
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
     }
 }
