@@ -293,3 +293,40 @@ Caching, Async, Background Jobs – Optimization with Redis and Hangfire
 - MediatR decouples presentation from application logic
 - FluentValidation ensures input validation at application boundary
 - EF Core migrations enable real persistence from day one
+
+## Day 12: Security & Authentication (JWT, Roles in Clean) – Integrating Auth Across Layers
+
+**Completed Today:**
+- Implemented full **JWT-based authentication** and **role-based authorization** within Clean Architecture
+- Defined domain-level security model in Core:
+  - `User` entity with Id, Email, PasswordHash, Role
+  - `IPasswordHasher` abstraction for secure hashing
+- Provided concrete implementations in Infrastructure:
+  - `BcryptPasswordHasher` using BCrypt.Net-Next
+  - `JwtTokenService` for generating secure JWT tokens with claims (Id, Email, Role)
+- Created authentication feature slice in Application:
+  - `LoginCommand` + `LoginCommandHandler` for credential validation and token generation
+  - Integrated password verification and token issuance
+- Configured JWT authentication middleware in Api project:
+  - Added JwtBearer scheme with proper token validation parameters
+  - Registered `AddAuthentication` and `AddAuthorization`
+- Protected endpoints with `[Authorize]` and role checks:
+  - Example: `[Authorize(Roles = "Admin")]` on admin-only endpoints
+- Seeded an initial admin user via `AppDbContextSeed` (Development environment)
+  - Email: admin@grocery.com
+  - Password: Admin123! (hashed with BCrypt)
+- Tested authentication flow:
+  - Successful login → returns valid JWT token
+  - Protected endpoints: 401 Unauthorized without token, 403 Forbidden with wrong role
+  - Token validation and role enforcement working correctly
+
+**Key Learnings:**
+- Authentication and authorization cleanly integrated into Clean/Onion layers:
+  - Core owns domain security model (User entity)
+  - Application owns use-case (LoginCommand + Handler)
+  - Infrastructure provides concrete security services (hasher, token generator)
+  - Presentation (Api) handles HTTP concerns and middleware
+- JWT tokens carry claims (Id, Email, Role) for role-based access control
+- Passwords never stored in plain text — always hashed with strong algorithm (BCrypt)
+- Seeding sensitive data (admin user) only in Development environment
+- Role-based protection prevents unauthorized access to sensitive operations

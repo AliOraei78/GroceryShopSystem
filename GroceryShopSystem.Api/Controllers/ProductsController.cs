@@ -1,6 +1,7 @@
-using MediatR;
 using GroceryShopSystem.Application.Features.Products.Commands;
 using GroceryShopSystem.Application.Features.Products.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GroceryShopSystem.Api.Controllers;
@@ -23,6 +24,7 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] AddProductCommand command)
     {

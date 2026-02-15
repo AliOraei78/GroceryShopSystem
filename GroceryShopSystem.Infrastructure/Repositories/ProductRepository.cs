@@ -16,7 +16,12 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetByIdAsync(Guid id)
     {
-        return await _context.Products.FindAsync(id);
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            throw new Exception("No product found");
+        }
+        return product;
     }
 
     public async Task<IEnumerable<Product>> GetAllAsync()
